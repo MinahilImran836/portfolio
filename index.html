@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Minahil Imran</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="star star-lg" style="top: 12%; left: 18%;">✦</div>
+        <div class="star star-sm" style="top: 22%; left: 10%;">✦</div>
+        <div class="star star-md" style="top: 8%;  left: 50%;">✦</div>
+        <div class="star star-lg" style="top: 18%; right: 12%;">✦</div>
+        <div class="star star-sm" style="top: 45%; right: 7%;">✦</div>
+        <div class="star star-md" style="top: 65%; left: 15%;">✦</div>
+
+        <div class="portfolio-card">
+
+            <nav class="nav-links">
+                <a href="#about"   class="pink  spa-link active-nav" data-page="about">About me</a>
+                <a href="#designs" class="blue  spa-link"            data-page="designs">Designs</a>
+                <a href="#exp"     class="green spa-link"            data-page="exp">Experience</a>
+                <a href="#contact" class="purple contact-nav spa-link" data-page="contact">Contact</a>
+            </nav>
+
+            <div id="card-content"></div>
+
+        </div>
+
+        <div class="footer-region">
+            <div class="social-bar">
+                <a href="https://github.com/MinahilImran836" target="_blank"><img src="Assets/github.svg" alt="GitHub" class="social-icon-img"></a>
+                <a href="https://www.linkedin.com/in/minahil-imran-29ab72291/" target="_blank"><img src="Assets/linkedin.svg" alt="LinkedIn" class="social-icon-img"></a>
+            </div>
+            <div class="ground-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ── TYPING ── */
+        let introTyped = false;
+
+        function typeLine(elId, text, speed) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            el.textContent = '';
+            let i = 0;
+            function next() {
+                if (i < text.length) {
+                    el.textContent += text[i++];
+                    setTimeout(next, speed);
+                }
+            }
+            next();
+        }
+
+        /* ── PAGE TEMPLATES ── */
+        const pages = {
+
+            about: {
+                title: 'Portfolio | Minahil Imran',
+                render() {
+                    return `
+                    <div class="card-scroll-area">
+                        <div class="about-layout">
+
+                            <div class="about-avatar-col">
+                                <div class="circle-frame">
+                                    <div class="avatar-inner" id="face">
+                                        <img src="Assets/head.png" class="head-base" alt="Avatar">
+                                        <div class="eye-socket left">
+                                            <img src="Assets/eye-ball.png" class="pupil" alt="Pupil">
+                                        </div>
+                                        <div class="eye-socket right">
+                                            <img src="Assets/eye-ball.png" class="pupil" alt="Pupil">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="about-text-col">
+                                <div class="intro-name">Minahil Imran</div>
+                                <div class="intro-role">UI/UX Designer</div>
+                                <p class="intro-text" id="intro-para"></p>
+
+                                <div class="about-featured-label">Featured Work</div>
+                                <a href="#detail?project=campuslife" class="about-design-card spa-link" data-page="detail" data-project="campuslife">
+                                    <div class="about-card-thumb"><img src="Assets/campusLife.png" alt="Campus Life"></div>
+                                    <div class="about-card-body">
+                                        <div class="about-card-title">Campus Life</div>
+                                        <div class="about-card-desc">Campus companion app — warm, tactile design system built in Figma.</div>
+                                    </div>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>`;
+                },
+                afterRender() {
+                    const face   = document.getElementById('face');
+                    const pupils = document.querySelectorAll('.pupil');
+                    if (face) {
+                        document.addEventListener('mousemove', function eyeMove(e) {
+                            if (!document.getElementById('face')) {
+                                document.removeEventListener('mousemove', eyeMove);
+                                return;
+                            }
+                            const rect = face.getBoundingClientRect();
+                            const cx = rect.left + rect.width  / 2;
+                            const cy = rect.top  + rect.height / 2;
+                            const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+                            pupils.forEach(p => {
+                                p.style.transform = `translate(calc(-50% + ${Math.cos(angle)*3}px), calc(-50% + ${Math.sin(angle)*2}px))`;
+                            });
+                        });
+                    }
+
+                    const bioText = "UI/UX Designer crafting digital experiences that are both beautiful and functional. I specialize in creating user-centered designs that feel intuitive and welcoming.";
+                    const el = document.getElementById('intro-para');
+                    if (!el) return;
+                    if (introTyped) {
+                        el.textContent = bioText;
+                    } else {
+                        introTyped = true;
+                        typeLine('intro-para', bioText, 22);
+                    }
+                }
+            },
+
+            designs: {
+                title: 'Designs | Minahil Imran',
+                render() {
+                    return `
+                    <div class="card-scroll-area">
+                        <h2 class="section-heading">Designs</h2>
+                        <div class="designs-grid">
+                            <a href="#detail?project=quill" class="grid-design-card spa-link" data-page="detail" data-project="quill">
+                                <div class="grid-card-thumb"><img src="Assets/quill.png" alt="Quill"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Quill</div>
+                                    <div class="grid-card-desc">Journaling app with customizable stickers and intuitive design.</div>
+                                </div>
+                            </a>
+                            <a href="#detail?project=fetch" class="grid-design-card spa-link" data-page="detail" data-project="fetch">
+                                <div class="grid-card-thumb"><img src="Assets/fetch.png" alt="Fetch"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Fetch</div>
+                                    <div class="grid-card-desc">Engaging app design with approachable and intuitive UI elements.</div>
+                                </div>
+                            </a>
+                            <a href="#detail?project=campuslife" class="grid-design-card spa-link" data-page="detail" data-project="campuslife">
+                                <div class="grid-card-thumb"><img src="Assets/campusLife.png" alt="Campus Life"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Campus Life</div>
+                                    <div class="grid-card-desc">Streamlined campus companion app for task management and daily organization.</div>
+                                </div>
+                            </a>
+                            <a href="#detail?project=crochetmi" class="grid-design-card spa-link" data-page="detail" data-project="crochetmi">
+                                <div class="grid-card-thumb"><img src="Assets/crochetMi.png" alt="Crochet Mi"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Crochet Mi</div>
+                                    <div class="grid-card-desc">E-commerce website for crochet business with refined, artisanal aesthetic.</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>`;
+                },
+                afterRender() {}
+            },
+
+            exp: {
+                title: 'Experience | Minahil Imran',
+                render() {
+                    return `
+                    <div class="card-scroll-area">
+                        <h2 class="section-heading">Experience &amp; Skills</h2>
+                        <div class="exp-block">
+                            <div class="exp-role-title">Freelance UI/UX Designer</div>
+                            <div class="exp-company">Self-employed · 2025 – Present</div>
+                            <div class="exp-desc">Leading end-to-end design projects for startups and small businesses. Specializing in mobile app interfaces, web dashboards, and brand identity systems. Focus on user-centered design and conversion optimization.</div>
+                        </div>
+                        <div class="exp-divider"></div>
+                        <h2 class="section-heading" style="margin-top:20px;">Tools &amp; Skills</h2>
+                        <div class="skills-grid">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Adobe XD</span>
+                            <span class="skill-tag">Illustrator</span>
+                            <span class="skill-tag">Photoshop</span>
+                            <span class="skill-tag">Prototyping</span>
+                            <span class="skill-tag">Wireframing</span>
+                            <span class="skill-tag">User Research</span>
+                            <span class="skill-tag">Design Systems</span>
+                            <span class="skill-tag">HTML / CSS</span>
+                            <span class="skill-tag">Motion Design</span>
+                        </div>
+                    </div>`;
+                },
+                afterRender() {}
+            },
+
+            contact: {
+                title: 'Contact | Minahil Imran',
+                render() {
+                    return `
+                    <div class="card-scroll-area">
+                        <h2 class="section-heading">Contact Me</h2>
+                        <div class="contact-info-row" style="margin-bottom:4px;"><span>✉</span> minahilimran836@gmail.com</div>
+                        <div class="contact-form-wrap">
+                            <div class="contact-field">
+                                <label for="c-name">Name</label>
+                                <input type="text" id="c-name" placeholder="Your name">
+                            </div>
+                            <div class="contact-field">
+                                <label for="c-email">Email</label>
+                                <input type="email" id="c-email" value="minahilimran836@gmail.com" readonly>
+                            </div>
+                            <div class="contact-field">
+                                <label for="c-msg">Message</label>
+                                <textarea id="c-msg" rows="4" placeholder="Say hello..."></textarea>
+                            </div>
+                            <button class="contact-submit-btn" onclick="sendMessage()">Send ✦</button>
+                        </div>
+                    </div>`;
+                },
+                afterRender() {}
+            },
+
+            detail: {
+                title: 'Design Detail | Minahil Imran',
+                render() {
+                    return `
+                    <div class="card-scroll-area">
+                        <a href="#designs" class="detail-back-btn spa-link" data-page="designs">← Back to Designs</a>
+                        <div class="detail-meta">
+                            <div class="detail-title" id="detail-title">Loading…</div>
+                            <div class="detail-tags" id="detail-tags"></div>
+                        </div>
+                        <p class="detail-description" id="detail-desc"></p>
+                        <div class="detail-section-title">Screens</div>
+                        <div class="detail-screens-grid" id="detail-screens"></div>
+                        <div class="detail-section-title">Process Notes</div>
+                        <p class="detail-description" id="detail-notes"></p>
+                    </div>`;
+                },
+                afterRender(project) {
+                    const projects = {
+                        quill: {
+                            title: 'Quill', tags: ['Figma','Mobile','UI/UX'],
+                            desc: 'Journaling app with customizable stickers and intuitive design.',
+                            screens: ['Assets/Quill1_cropped.jpg','Assets/Quill2_cropped.jpg','Assets/Quill3_cropped.jpg','Assets/Quill4_cropped.jpg'],
+                            notes: 'Explored how digital journaling can replicate the experience of a physical notebook. Designed custom sticker elements and a refined color palette to create an engaging space for daily reflections. Focused on making the interface feel intuitive and polished.'
+                        },
+                        fetch: {
+                            title: 'Fetch', tags: ['Figma','Mobile','UI/UX'],
+                            desc: 'Engaging app design with approachable and intuitive UI elements.',
+                            screens: ['Assets/Screenshot_20260517-164303_cropped.jpg','Assets/Screenshot_20260517-164305_cropped.jpg','Assets/Screenshot_20260517-164714_cropped.jpg','Assets/Screenshot_20260517-165052_cropped.jpg'],
+                            notes: 'Designed to create an app that feels engaging and approachable. Experimented with rounded shapes, refined shadows, and clear iconography to build trust and user satisfaction. The goal was to make complex interactions feel simple and efficient.'
+                        },
+                        campuslife: {
+                            title: 'Campus Life', tags: ['Figma','Mobile','UI/UX'],
+                            desc: 'Streamlined campus companion app for task management and daily organization.',
+                            screens: ['Assets/CampusLife1_cropped.jpg','Assets/CampusLife2_cropped.jpg','Assets/CampusLife3_cropped.jpg','Assets/CampusLife4_cropped.jpg'],
+                            notes: 'Designed with a focus on reducing cognitive load — clean layouts, balanced colors, and clear visual hierarchy help users stay organized without feeling overwhelmed. Built as an efficient alternative to complex productivity apps.'
+                        },
+                        crochetmi: {
+                            title: 'Crochet Mi', tags: ['Figma','Branding','UI/UX'],
+                            desc: 'E-commerce website for crochet business with refined, artisanal aesthetic.',
+                            screens: ['Assets/CrochetMi1.png','Assets/CrochetMi2.png','Assets/CrochetMi3.png','Assets/CrochetMi4.png'],
+                            notes: 'Explored how to translate the quality of handmade crafts into digital design. Used balanced colors, organic shapes, and thoughtful whitespace to let the products shine. The design balances the artisanal nature of handmade goods with a professional shopping experience.'
+                        }
+                    };
+                    const data = projects[project];
+                    if (!data) return;
+                    document.title = data.title + ' | Minahil Imran';
+                    document.getElementById('detail-title').textContent = data.title;
+                    const tagsEl = document.getElementById('detail-tags');
+                    data.tags.forEach(t => {
+                        const s = document.createElement('span');
+                        s.className = 'detail-tag';
+                        s.textContent = t;
+                        tagsEl.appendChild(s);
+                    });
+                    document.getElementById('detail-desc').textContent  = data.desc;
+                    document.getElementById('detail-notes').textContent = data.notes;
+                    const grid = document.getElementById('detail-screens');
+                    data.screens.forEach((src, i) => {
+                        const div = document.createElement('div');
+                        div.className = 'detail-screen-thumb';
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = data.title + ' Screen ' + (i + 1);
+                        div.appendChild(img);
+                        grid.appendChild(div);
+                    });
+                }
+            }
+        };
+
+        /* ── ROUTER ── */
+        function getRoute() {
+            const hash = location.hash.replace('#', '') || 'about';
+            if (hash.startsWith('detail?project=')) {
+                return { page: 'detail', project: hash.split('=')[1] };
+            }
+            return { page: hash, project: null };
+        }
+
+        function navigate(route) {
+            const { page, project } = route;
+            const def     = pages[page] || pages.about;
+            const content = document.getElementById('card-content');
+
+            content.classList.add('fading');
+            setTimeout(() => {
+                document.title       = def.title;
+                content.innerHTML    = def.render(project);
+
+                document.querySelectorAll('.nav-links .spa-link').forEach(a => {
+                    a.classList.toggle('active-nav',
+                        a.dataset.page === page || (page === 'detail' && a.dataset.page === 'designs'));
+                });
+
+                bindLinks();
+                def.afterRender(project);
+                content.classList.remove('fading');
+            }, 180);
+        }
+
+        function bindLinks() {
+            document.querySelectorAll('.spa-link').forEach(a => {
+                if (a.dataset.bound) return;
+                a.dataset.bound = '1';
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    const page    = a.dataset.page    || 'about';
+                    const project = a.dataset.project || null;
+                    history.pushState(null, '', '#' + (project ? `detail?project=${project}` : page));
+                    navigate({ page, project });
+                });
+            });
+        }
+
+        window.addEventListener('popstate', () => navigate(getRoute()));
+        bindLinks();
+        navigate(getRoute());
+
+        /* ── CONTACT ── */
+        function sendMessage() {
+            const name = (document.getElementById('c-name') || {}).value || '';
+            const msg  = encodeURIComponent((document.getElementById('c-msg') || {}).value || '');
+            const to   = 'minahilimran836@gmail.com';
+            const subj = encodeURIComponent('Portfolio Inquiry from ' + name);
+            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subj}&body=${msg}`, '_blank');
+        }
+    </script>
+</body>
+</html>

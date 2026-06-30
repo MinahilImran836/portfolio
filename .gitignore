@@ -1,0 +1,12 @@
+# VS Code
+.vscode/
+
+# Trash folder
+trash/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
