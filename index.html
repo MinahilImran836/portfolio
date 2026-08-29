@@ -10,6 +10,7 @@
 <body>
 
     <div class="main-container">
+        <!-- Background Decor Stars -->
         <div class="star star-lg" style="top: 12%; left: 18%;">✦</div>
         <div class="star star-sm" style="top: 22%; left: 10%;">✦</div>
         <div class="star star-md" style="top: 8%;  left: 50%;">✦</div>
@@ -17,32 +18,128 @@
         <div class="star star-sm" style="top: 45%; right: 7%;">✦</div>
         <div class="star star-md" style="top: 65%; left: 15%;">✦</div>
 
+        <!-- Main Card -->
         <div class="portfolio-card">
-
             <nav class="nav-links">
-                <a href="#about"   class="pink  spa-link active-nav" data-page="about">About me</a>
-                <a href="#designs" class="blue  spa-link"            data-page="designs">Designs</a>
-                <a href="#exp"     class="green spa-link"            data-page="exp">Experience</a>
-                <a href="#contact" class="purple contact-nav spa-link" data-page="contact">Contact</a>
+                <a href="#about"    class="pink   spa-link active-nav" data-page="about">About</a>
+                <a href="#designs"  class="blue   spa-link"            data-page="designs">Projects</a>
+                <a href="#exp"      class="green  spa-link"            data-page="exp">Experience</a>
+                <a href="#contact"  class="purple contact-nav spa-link" data-page="contact">Contact</a>
             </nav>
-
             <div id="card-content"></div>
-
         </div>
 
+        <!-- Bottom Runner Bar & Socials -->
         <div class="footer-region">
             <div class="social-bar">
                 <a href="https://github.com/MinahilImran836" target="_blank"><img src="Assets/github.svg" alt="GitHub" class="social-icon-img"></a>
                 <a href="https://www.linkedin.com/in/minahil-imran-29ab72291/" target="_blank"><img src="Assets/linkedin.svg" alt="LinkedIn" class="social-icon-img"></a>
             </div>
-            <div class="ground-bar"></div>
+            <div class="ground-bar">
+                <img src="Assets/F1.png" id="runner-sprite" class="runner-character" alt="Runner">
+                <div class="combo-text" id="combo-popup">+1 Skill</div>
+                <div class="skills-stream-wrapper">
+                    <div class="skills-stream" id="skills-stream"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        /* ── RUN IN PLACE ANIMATION ── */
+        const runnerSprite = document.getElementById('runner-sprite');
+        let currentFrame = 1;
+        if (runnerSprite) {
+            setInterval(() => {
+                currentFrame = currentFrame === 1 ? 2 : 1;
+                runnerSprite.src = `Assets/F${currentFrame}.png`;
+            }, 160);
+        }
+
+        /* ── SVG-BASED SKILL STREAM ── */
+        const skillList = [
+            { name: "Figma", icon: "Assets/Figma.svg" },
+            { name: "Canva", icon: "Assets/Canva.svg" },
+            { name: "React", icon: "Assets/React.svg" },
+            { name: "Python", icon: "Assets/Python.svg" },
+            { name: "HTML", icon: "Assets/html.svg" },
+            { name: "C++", icon: "Assets/cpp.svg" },
+            { name: "JavaScript", icon: "Assets/javascript.svg" },
+            { name: "Android", icon: "Assets/android.svg" }
+        ];
+
+        const streamContainer = document.getElementById('skills-stream');
+        const comboPopup = document.getElementById('combo-popup');
+
+        let streamPosition = 0;
+        let isWaveActive = false;
+        const speed = 3.8;
+
+        function createWave() {
+            if (!streamContainer) return;
+            streamContainer.innerHTML = '';
+            
+            skillList.forEach(skill => {
+                const badge = document.createElement('span');
+                badge.className = 'runner-skill-badge';
+                badge.dataset.skill = skill.name;
+                
+                const img = document.createElement('img');
+                img.src = skill.icon;
+                img.alt = skill.name;
+                
+                badge.appendChild(img);
+                streamContainer.appendChild(badge);
+            });
+
+            const wrapperWidth = document.querySelector('.skills-stream-wrapper').offsetWidth;
+            streamPosition = wrapperWidth;
+            streamContainer.style.transform = `translate(${streamPosition}px, -50%)`;
+            isWaveActive = true;
+        }
+
+        function animateSkills() {
+            if (isWaveActive) {
+                streamPosition -= speed;
+                streamContainer.style.transform = `translate(${streamPosition}px, -50%)`;
+
+                const runnerRect = runnerSprite.getBoundingClientRect();
+                const badges = streamContainer.querySelectorAll('.runner-skill-badge');
+                let remainingBadges = 0;
+
+                badges.forEach(badge => {
+                    const badgeRect = badge.getBoundingClientRect();
+                    
+                    if (badgeRect.left <= runnerRect.right - 20 && !badge.dataset.hit) {
+                        badge.dataset.hit = "true";
+                        badge.classList.add('hit-fade');
+
+                        comboPopup.textContent = `+1 Skill`;
+                        comboPopup.classList.remove('combo-active');
+                        void comboPopup.offsetWidth;
+                        comboPopup.classList.add('combo-active');
+                    }
+
+                    if (!badge.dataset.hit) {
+                        remainingBadges++;
+                    }
+                });
+
+                if (remainingBadges === 0 && isWaveActive) {
+                    isWaveActive = false;
+                    setTimeout(() => {
+                        createWave();
+                    }, 800);
+                }
+            }
+            requestAnimationFrame(animateSkills);
+        }
+
+        createWave();
+        requestAnimationFrame(animateSkills);
+
         /* ── TYPING ── */
         let introTyped = false;
-
         function typeLine(elId, text, speed) {
             const el = document.getElementById(elId);
             if (!el) return;
@@ -59,66 +156,72 @@
 
         /* ── PAGE TEMPLATES ── */
         const pages = {
-
             about: {
                 title: 'Portfolio | Minahil Imran',
                 render() {
                     return `
                     <div class="card-scroll-area">
                         <div class="about-layout">
-
                             <div class="about-avatar-col">
                                 <div class="circle-frame">
                                     <div class="avatar-inner" id="face">
                                         <img src="Assets/head.png" class="head-base" alt="Avatar">
-                                        <div class="eye-socket left">
-                                            <img src="Assets/eye-ball.png" class="pupil" alt="Pupil">
-                                        </div>
-                                        <div class="eye-socket right">
-                                            <img src="Assets/eye-ball.png" class="pupil" alt="Pupil">
-                                        </div>
+                                        <div class="eye-socket left"><img src="Assets/eye-ball.png" class="pupil" alt="Pupil"></div>
+                                        <div class="eye-socket right"><img src="Assets/eye-ball.png" class="pupil" alt="Pupil"></div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="about-text-col">
                                 <div class="intro-name">Minahil Imran</div>
-                                <div class="intro-role">UI/UX Designer</div>
+                                <div class="intro-role">Software Engineer & UI/UX Developer</div>
                                 <p class="intro-text" id="intro-para"></p>
 
-                                <div class="about-featured-label">Featured Work</div>
-                                <a href="#detail?project=campuslife" class="about-design-card spa-link" data-page="detail" data-project="campuslife">
-                                    <div class="about-card-thumb"><img src="Assets/campusLife.png" alt="Campus Life"></div>
-                                    <div class="about-card-body">
-                                        <div class="about-card-title">Campus Life</div>
-                                        <div class="about-card-desc">Campus companion app — warm, tactile design system built in Figma.</div>
-                                    </div>
-                                </a>
-                            </div>
+                                <div class="about-section-label">What I Do</div>
+                                <p class="about-section-text">I build end-to-end digital products—from modeling data pipelines and writing clean logic to deploying custom frontend micro-sites with distinct visual identities.</p>
 
+                                <button class="resume-download-btn" onclick="downloadResume()">Download Resume ✦</button>
+                            </div>
                         </div>
                     </div>`;
                 },
                 afterRender() {
                     const face   = document.getElementById('face');
                     const pupils = document.querySelectorAll('.pupil');
+
                     if (face) {
-                        document.addEventListener('mousemove', function eyeMove(e) {
+                        function eyeMove(e) {
                             if (!document.getElementById('face')) {
                                 document.removeEventListener('mousemove', eyeMove);
                                 return;
                             }
+
+                            if (window.innerWidth <= 768) {
+                                pupils.forEach(p => {
+                                    p.style.transform = `translate(-50%, -50%)`;
+                                });
+                                return;
+                            }
+
                             const rect = face.getBoundingClientRect();
                             const cx = rect.left + rect.width  / 2;
                             const cy = rect.top  + rect.height / 2;
                             const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
+
                             pupils.forEach(p => {
-                                p.style.transform = `translate(calc(-50% + ${Math.cos(angle)*3}px), calc(-50% + ${Math.sin(angle)*2}px))`;
+                                p.style.transform = `translate(calc(-50% + ${Math.cos(angle) * 3}px), calc(-50% + ${Math.sin(angle) * 2}px))`;
                             });
-                        });
+                        }
+
+                        if (window.innerWidth <= 768) {
+                            pupils.forEach(p => {
+                                p.style.transform = `translate(-50%, -50%)`;
+                            });
+                        }
+
+                        document.addEventListener('mousemove', eyeMove);
                     }
 
-                    const bioText = "UI/UX Designer crafting digital experiences that are both beautiful and functional. I specialize in creating user-centered designs that feel intuitive and welcoming.";
+                    const bioText = "Building intelligent systems with functional, custom interfaces. Focused on AI/ML development, web architecture, and user-centered digital design.";
                     const el = document.getElementById('intro-para');
                     if (!el) return;
                     if (introTyped) {
@@ -129,40 +232,53 @@
                     }
                 }
             },
-
             designs: {
-                title: 'Designs | Minahil Imran',
+                title: 'Projects | Minahil Imran',
                 render() {
                     return `
                     <div class="card-scroll-area">
-                        <h2 class="section-heading">Designs</h2>
+                        <h2 class="section-heading">Projects</h2>
                         <div class="designs-grid">
-                            <a href="#detail?project=quill" class="grid-design-card spa-link" data-page="detail" data-project="quill">
-                                <div class="grid-card-thumb"><img src="Assets/quill.png" alt="Quill"></div>
+                            <a href="#detail?project=emailassistant" class="grid-design-card spa-link" data-page="detail" data-project="emailassistant">
+                                <div class="grid-card-thumb"><img src="Assets/email.png" alt="Email Assistant"></div>
                                 <div class="grid-card-body">
-                                    <div class="grid-card-title">Quill</div>
-                                    <div class="grid-card-desc">Journaling app with customizable stickers and intuitive design.</div>
+                                    <div class="grid-card-title">Email Assistant</div>
+                                    <div class="grid-card-desc">AI email management system with Groq LLM thread summarization & OAuth integrations.</div>
+                                </div>
+                            </a>
+                            <a href="#detail?project=styletransfer" class="grid-design-card spa-link" data-page="detail" data-project="styletransfer">
+                                <div class="grid-card-thumb"><img src="Assets/NST.png" alt="Style Transfer"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Fast NST Tuning</div>
+                                    <div class="grid-card-desc">Published research paper on fine-tuning feed-forward NST models with Flickr30k.</div>
+                                </div>
+                            </a>
+                            <a href="#detail?project=cirrhosis" class="grid-design-card spa-link" data-page="detail" data-project="cirrhosis">
+                                <div class="grid-card-thumb"><img src="Assets/cirrhosis.png" alt="Cirrhosis CV"></div>
+                                <div class="grid-card-body">
+                                    <div class="grid-card-title">Cirrhosis Diagnosis</div>
+                                    <div class="grid-card-desc">Multi-task CV system combining classification, detection, and lesion segmentation.</div>
                                 </div>
                             </a>
                             <a href="#detail?project=fetch" class="grid-design-card spa-link" data-page="detail" data-project="fetch">
                                 <div class="grid-card-thumb"><img src="Assets/fetch.png" alt="Fetch"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Fetch</div>
-                                    <div class="grid-card-desc">Engaging app design with approachable and intuitive UI elements.</div>
+                                    <div class="grid-card-desc">RAG-powered mobile interface prototype with clear visual hierarchy.</div>
                                 </div>
                             </a>
                             <a href="#detail?project=campuslife" class="grid-design-card spa-link" data-page="detail" data-project="campuslife">
                                 <div class="grid-card-thumb"><img src="Assets/campusLife.png" alt="Campus Life"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Campus Life</div>
-                                    <div class="grid-card-desc">Streamlined campus companion app for task management and daily organization.</div>
+                                    <div class="grid-card-desc">Companion app leveraging RAG context retrieval for student schedule workflows.</div>
                                 </div>
                             </a>
-                            <a href="#detail?project=crochetmi" class="grid-design-card spa-link" data-page="detail" data-project="crochetmi">
-                                <div class="grid-card-thumb"><img src="Assets/crochetMi.png" alt="Crochet Mi"></div>
+                            <a href="#detail?project=quill" class="grid-design-card spa-link" data-page="detail" data-project="quill">
+                                <div class="grid-card-thumb"><img src="Assets/quill.png" alt="Quill"></div>
                                 <div class="grid-card-body">
-                                    <div class="grid-card-title">Crochet Mi</div>
-                                    <div class="grid-card-desc">E-commerce website for crochet business with refined, artisanal aesthetic.</div>
+                                    <div class="grid-card-title">Quill</div>
+                                    <div class="grid-card-desc">Journaling application with custom UI design systems and state handling.</div>
                                 </div>
                             </a>
                         </div>
@@ -170,44 +286,29 @@
                 },
                 afterRender() {}
             },
-
             exp: {
                 title: 'Experience | Minahil Imran',
                 render() {
                     return `
                     <div class="card-scroll-area">
-                        <h2 class="section-heading">Experience &amp; Skills</h2>
+                        <h2 class="section-heading">Experience</h2>
                         <div class="exp-block">
-                            <div class="exp-role-title">Freelance UI/UX Designer</div>
+                            <div class="exp-role-title">Freelance Web Designer & Developer</div>
                             <div class="exp-company">Self-employed · 2025 – Present</div>
-                            <div class="exp-desc">Leading end-to-end design projects for startups and small businesses. Specializing in mobile app interfaces, web dashboards, and brand identity systems. Focus on user-centered design and conversion optimization.</div>
+                            <div class="exp-desc">Designing and deploying custom frontend applications and landing pages for creators and small businesses. Engineering functional layouts, asset optimization, and responsive Vercel deployments.</div>
                         </div>
                         <div class="exp-divider"></div>
-                        <h2 class="section-heading" style="margin-top:20px;">Tools &amp; Skills</h2>
-                        <div class="skills-grid">
-                            <span class="skill-tag">Figma</span>
-                            <span class="skill-tag">Adobe XD</span>
-                            <span class="skill-tag">Illustrator</span>
-                            <span class="skill-tag">Photoshop</span>
-                            <span class="skill-tag">Prototyping</span>
-                            <span class="skill-tag">Wireframing</span>
-                            <span class="skill-tag">User Research</span>
-                            <span class="skill-tag">Design Systems</span>
-                            <span class="skill-tag">HTML / CSS</span>
-                            <span class="skill-tag">Motion Design</span>
-                        </div>
                     </div>`;
                 },
                 afterRender() {}
             },
-
             contact: {
                 title: 'Contact | Minahil Imran',
                 render() {
                     return `
                     <div class="card-scroll-area">
                         <h2 class="section-heading">Contact Me</h2>
-                        <div class="contact-info-row" style="margin-bottom:4px;"><span>✉</span> minahilimran836@gmail.com</div>
+                        <div class="contact-info-row"><span>✉</span> minahilimran836@gmail.com</div>
                         <div class="contact-form-wrap">
                             <div class="contact-field">
                                 <label for="c-name">Name</label>
@@ -223,56 +324,75 @@
                 },
                 afterRender() {}
             },
-
             detail: {
-                title: 'Design Detail | Minahil Imran',
+                title: 'Project Detail | Minahil Imran',
                 render() {
                     return `
                     <div class="card-scroll-area">
-                        <a href="#designs" class="detail-back-btn spa-link" data-page="designs">← Back to Designs</a>
+                        <a href="#designs" class="detail-back-btn spa-link" data-page="designs">← Back to Projects</a>
                         <div class="detail-meta">
                             <div class="detail-title" id="detail-title">Loading…</div>
                             <div class="detail-tags" id="detail-tags"></div>
                         </div>
                         <p class="detail-description" id="detail-desc"></p>
-                        <div class="detail-section-title">Screens</div>
+                        <div class="detail-section-title">Screens & Demos</div>
                         <div class="detail-screens-grid" id="detail-screens"></div>
-                        <div class="detail-section-title">Process Notes</div>
+                        <div class="detail-section-title">Engineering & Design Notes</div>
                         <p class="detail-description" id="detail-notes"></p>
                     </div>`;
                 },
                 afterRender(project) {
                     const projects = {
-                        quill: {
-                            title: 'Quill', tags: ['Figma','Mobile','UI/UX'],
-                            desc: 'Journaling app with customizable stickers and intuitive design.',
-                            screens: ['Assets/Quill1_cropped.jpg','Assets/Quill2_cropped.jpg','Assets/Quill3_cropped.jpg','Assets/Quill4_cropped.jpg'],
-                            notes: 'Explored how digital journaling can replicate the experience of a physical notebook. Designed custom sticker elements and a refined color palette to create an engaging space for daily reflections. Focused on making the interface feel intuitive and polished.'
+                        emailassistant: {
+                            title: 'AI Email Assistant', 
+                            tags: ['Python', 'Groq API', 'Gmail/Outlook APIs', 'LLM Summarization'],
+                            desc: 'Unified multi-platform email automation system with LLM-powered thread summarization and calendar scheduling.',
+                            screens: ['Assets/email1.png', 'Assets/email2.png'],
+                            notes: 'Engineered backend polling loops and OAuth2 integrations for Gmail & Microsoft Graph APIs, routing raw MIME data into structured JSON for Groq LLM inference.'
+                        },
+                        styletransfer: {
+                            title: 'Fast Neural Style Transfer Fine-Tuning', 
+                            tags: ['PyTorch', 'VGG-16', 'Perceptual Loss', 'Research Paper'],
+                            desc: 'Technical research paper on fine-tuning a feed-forward Neural Style Transfer model using Flickr30k.',
+                            screens: ['Assets/NST1.png', 'Assets/NST2.png'],
+                            notes: 'Co-authored technical research paper analyzing content vs. style weight ratios in Neural Style Transfer. Evaluated structural retention vs artistic transformation using SSIM (0.3–0.4) and LPIPS (~0.5) metrics.'
+                        },
+                        cirrhosis: {
+                            title: 'Cirrhosis Medical CV Pipeline', 
+                            tags: ['PyTorch', 'Computer Vision', 'Segmentation', 'Medical AI'],
+                            desc: 'Diagnostic multi-model system for classification, lesion segmentation, and detection in liver imaging.',
+                            screens: ['Assets/cirrhosis1.png', 'Assets/cirrhosis2.png'],
+                            notes: 'Trained and evaluated multi-task neural network architectures on medical datasets. Optimized segmentation Dice scores through targeted loss functions and image preprocessing.'
                         },
                         fetch: {
-                            title: 'Fetch', tags: ['Figma','Mobile','UI/UX'],
-                            desc: 'Engaging app design with approachable and intuitive UI elements.',
-                            screens: ['Assets/Screenshot_20260517-164303_cropped.jpg','Assets/Screenshot_20260517-164305_cropped.jpg','Assets/Screenshot_20260517-164714_cropped.jpg','Assets/Screenshot_20260517-165052_cropped.jpg'],
-                            notes: 'Designed to create an app that feels engaging and approachable. Experimented with rounded shapes, refined shadows, and clear iconography to build trust and user satisfaction. The goal was to make complex interactions feel simple and efficient.'
+                            title: 'Fetch', 
+                            tags: ['RAG Pipeline', 'Figma', 'Mobile UX'],
+                            desc: 'Mobile interface prototype powered by Retrieval-Augmented Generation for context-aware search.',
+                            screens: ['Assets/Fetch1.jpg', 'Assets/Fetch2.jpg', 'Assets/Fetch3.jpg', 'Assets/Fetch4.jpg'],
+                            notes: 'Designed mobile touch interfaces integrated with semantic retrieval backends to ensure high visual clarity for AI-generated answers.'
                         },
                         campuslife: {
-                            title: 'Campus Life', tags: ['Figma','Mobile','UI/UX'],
-                            desc: 'Streamlined campus companion app for task management and daily organization.',
-                            screens: ['Assets/CampusLife1_cropped.jpg','Assets/CampusLife2_cropped.jpg','Assets/CampusLife3_cropped.jpg','Assets/CampusLife4_cropped.jpg'],
-                            notes: 'Designed with a focus on reducing cognitive load — clean layouts, balanced colors, and clear visual hierarchy help users stay organized without feeling overwhelmed. Built as an efficient alternative to complex productivity apps.'
+                            title: 'Campus Life AI Companion', 
+                            tags: ['RAG Architecture', 'Figma', 'Web Systems'],
+                            desc: 'Student productivity application leveraging Retrieval-Augmented Generation (RAG) for course query resolution.',
+                            screens: ['Assets/CampusLife1_cropped.jpg', 'Assets/CampusLife2_cropped.jpg', 'Assets/CampusLife3_cropped.jpg', 'Assets/CampusLife4_cropped.jpg'],
+                            notes: 'Combined lightweight component systems with RAG-based search to simplify schedule optimization and course management workflows.'
                         },
-                        crochetmi: {
-                            title: 'Crochet Mi', tags: ['Figma','Branding','UI/UX'],
-                            desc: 'E-commerce website for crochet business with refined, artisanal aesthetic.',
-                            screens: ['Assets/CrochetMi1.png','Assets/CrochetMi2.png','Assets/CrochetMi3.png','Assets/CrochetMi4.png'],
-                            notes: 'Explored how to translate the quality of handmade crafts into digital design. Used balanced colors, organic shapes, and thoughtful whitespace to let the products shine. The design balances the artisanal nature of handmade goods with a professional shopping experience.'
+                        quill: {
+                            title: 'Quill App', 
+                            tags: ['Figma', 'Frontend UI', 'State Management'],
+                            desc: 'Personalized journaling application featuring modular layout systems.',
+                            screens: ['Assets/Quill1_cropped.jpg', 'Assets/Quill2_cropped.jpg', 'Assets/Quill3_cropped.jpg', 'Assets/Quill4_cropped.jpg'],
+                            notes: 'Focused on component hierarchy and low-friction user interaction flows.'
                         }
                     };
+
                     const data = projects[project];
                     if (!data) return;
                     document.title = data.title + ' | Minahil Imran';
                     document.getElementById('detail-title').textContent = data.title;
                     const tagsEl = document.getElementById('detail-tags');
+                    tagsEl.innerHTML = '';
                     data.tags.forEach(t => {
                         const s = document.createElement('span');
                         s.className = 'detail-tag';
@@ -281,7 +401,13 @@
                     });
                     document.getElementById('detail-desc').textContent  = data.desc;
                     document.getElementById('detail-notes').textContent = data.notes;
+
                     const grid = document.getElementById('detail-screens');
+                    if (!grid) return;
+                    grid.innerHTML = '';
+
+                    grid.className = 'detail-screens-grid ' + (data.screens.length > 2 ? 'grid-4-items' : 'grid-2-items');
+
                     data.screens.forEach((src, i) => {
                         const div = document.createElement('div');
                         div.className = 'detail-screen-thumb';
@@ -311,7 +437,7 @@
 
             content.classList.add('fading');
             setTimeout(() => {
-                document.title       = def.title;
+                document.title        = def.title;
                 content.innerHTML    = def.render(project);
 
                 document.querySelectorAll('.nav-links .spa-link').forEach(a => {
@@ -350,6 +476,11 @@
             const to   = 'minahilimran836@gmail.com';
             const subj = encodeURIComponent('Portfolio Inquiry from ' + name);
             window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subj}&body=${msg}`, '_blank');
+        }
+
+        /* ── RESUME DOWNLOAD ── */
+        function downloadResume() {
+            alert('Add your resume PDF to the Assets folder to link it here.');
         }
     </script>
 </body>
