@@ -3,22 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Minahil Imran</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Minahil Imran | Software Engineer</title>
+    <meta name="description" content="Minahil Imran: software engineer building backends, AI systems and thoughtful interfaces. Projects in LLMs, RAG, computer vision and mobile apps.">
+    <meta name="theme-color" content="#FBB1D2">
+
+    <!-- Link preview (LinkedIn / social) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Minahil Imran | Software Engineer">
+    <meta property="og:description" content="Backends, AI systems and thoughtful interfaces. Check out my projects in LLMs, RAG, computer vision and mobile.">
+    <meta property="og:url" content="https://minahilimran836.github.io/portfolio/">
+    <meta property="og:image" content="https://minahilimran836.github.io/portfolio/Assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="627">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" type="image/png" href="Assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="main-container">
-        <div class="star star-lg" style="top: 12%; left: 18%;">✦</div>
-        <div class="star star-sm" style="top: 22%; left: 10%;">✦</div>
-        <div class="star star-md" style="top: 8%;  left: 50%;">✦</div>
-        <div class="star star-lg" style="top: 18%; right: 12%;">✦</div>
-        <div class="star star-sm" style="top: 45%; right: 7%;">✦</div>
-        <div class="star star-md" style="top: 65%; left: 15%;">✦</div>
+        <div aria-hidden="true" class="star star-lg" style="top: 12%; left: 18%;">✦</div>
+        <div aria-hidden="true" class="star star-sm" style="top: 22%; left: 10%;">✦</div>
+        <div aria-hidden="true" class="star star-md" style="top: 8%;  left: 50%;">✦</div>
+        <div aria-hidden="true" class="star star-lg" style="top: 18%; right: 12%;">✦</div>
+        <div aria-hidden="true" class="star star-sm" style="top: 45%; right: 7%;">✦</div>
+        <div aria-hidden="true" class="star star-md" style="top: 65%; left: 15%;">✦</div>
 
         <div class="portfolio-card">
-            <nav class="nav-links">
+            <nav class="nav-links" aria-label="Main">
                 <a href="#about"    class="pink   spa-link active-nav" data-page="about">About</a>
                 <a href="#designs"  class="blue   spa-link"            data-page="designs">Projects</a>
                 <a href="#exp"      class="green  spa-link"            data-page="exp">Experience</a>
@@ -29,11 +45,11 @@
 
         <div class="footer-region">
             <div class="social-bar">
-                <a href="https://github.com/MinahilImran836" target="_blank"><img src="Assets/github.svg" alt="GitHub" class="social-icon-img"></a>
-                <a href="https://www.linkedin.com/in/minahil-imran-29ab72291/" target="_blank"><img src="Assets/linkedin.svg" alt="LinkedIn" class="social-icon-img"></a>
+                <a href="https://github.com/MinahilImran836" target="_blank" rel="noopener" aria-label="GitHub"><img src="Assets/github.svg" alt="" class="social-icon-img"></a>
+                <a href="https://www.linkedin.com/in/minahil-imran-29ab72291/" target="_blank" rel="noopener" aria-label="LinkedIn"><img src="Assets/linkedin.svg" alt="" class="social-icon-img"></a>
             </div>
-            <div class="ground-bar">
-                <img src="Assets/F1.png" id="runner-sprite" class="runner-character" alt="Runner">
+            <div class="ground-bar" aria-hidden="true">
+                <img src="Assets/F1.png" id="runner-sprite" class="runner-character" alt="">
                 <div class="combo-text" id="combo-popup">+1 Skill</div>
                 <div class="skills-stream-wrapper">
                     <div class="skills-stream" id="skills-stream"></div>
@@ -42,11 +58,17 @@
         </div>
     </div>
 
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot preview">
+        <button class="btn lightbox-close" id="lightbox-close" aria-label="Close preview">✕</button>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
     <script>
         /* ── RUN IN PLACE ANIMATION ── */
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const runnerSprite = document.getElementById('runner-sprite');
         let currentFrame = 1;
-        if (runnerSprite) {
+        if (runnerSprite && !reduceMotion) {
             setInterval(() => {
                 currentFrame = currentFrame === 1 ? 2 : 1;
                 runnerSprite.src = `Assets/F${currentFrame}.png`;
@@ -133,19 +155,28 @@
         }
 
         createWave();
-        requestAnimationFrame(animateSkills);
+        if (!reduceMotion) requestAnimationFrame(animateSkills);
 
         /* ── TYPING ── */
         let introTyped = false;
         function typeLine(elId, text, speed) {
             const el = document.getElementById(elId);
             if (!el) return;
-            el.textContent = '';
+            el.innerHTML = '<span class="typed"></span><span class="caret"></span><span class="ghost"></span>';
+            const typed = el.querySelector('.typed');
+            const ghost = el.querySelector('.ghost');
+            const caret = el.querySelector('.caret');
+            ghost.textContent = text;
             let i = 0;
             function next() {
+                if (!el.isConnected) return;
                 if (i < text.length) {
-                    el.textContent += text[i++];
+                    i++;
+                    typed.textContent = text.slice(0, i);
+                    ghost.textContent = text.slice(i);
                     setTimeout(next, speed);
+                } else {
+                    setTimeout(() => caret.remove(), 1600);
                 }
             }
             next();
@@ -162,18 +193,22 @@
                             <div class="about-avatar-col">
                                 <div class="circle-frame">
                                     <div class="avatar-inner" id="face">
-                                        <img src="Assets/head.png" class="head-base" alt="Avatar">
-                                        <div class="eye-socket left"><img src="Assets/eye-ball.png" class="pupil" alt="Pupil"></div>
-                                        <div class="eye-socket right"><img src="Assets/eye-ball.png" class="pupil" alt="Pupil"></div>
+                                        <img src="Assets/head.png" class="head-base" alt="Pixel-art portrait of Minahil">
+                                        <div class="eye-socket left"><img src="Assets/eye-ball.png" class="pupil" alt=""></div>
+                                        <div class="eye-socket right"><img src="Assets/eye-ball.png" class="pupil" alt=""></div>
                                     </div>
                                 </div>
+                                <div class="status-pill"><span class="status-dot"></span>Open to opportunities</div>
                             </div>
                             <div class="about-text-col">
-                                <div class="intro-name">Minahil Imran</div>
-                                <div class="intro-role">Software Engineer</div>
+                                <div class="intro-hello">Hi there, I'm</div>
+                                <h1 class="intro-name">Minahil Imran</h1>
+                                <div class="intro-role">Software Engineer · AI &amp; Backend</div>
                                 <p class="intro-text" id="intro-para"></p>
-
-                    
+                                <div class="about-cta">
+                                    <a href="#designs" class="btn btn-primary spa-link" data-page="designs">View Projects →</a>
+                                    <a href="#contact" class="btn spa-link" data-page="contact">Say Hello ✦</a>
+                                </div>
                             </div>
                         </div>
                     </div>`;
@@ -232,47 +267,54 @@
                     return `
                     <div class="card-scroll-area">
                         <h2 class="section-heading">Projects</h2>
+                        <p class="section-sub">A mix of AI research, LLM tooling and mobile apps. Click any card for screenshots and details.</p>
                         <div class="designs-grid">
                             <a href="#detail?project=emailassistant" class="grid-design-card spa-link" data-page="detail" data-project="emailassistant">
-                                <div class="grid-card-thumb"><img src="Assets/email.png" alt="Email Assistant"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/email.png" alt="Email Assistant"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Email Assistant</div>
                                     <div class="grid-card-desc">AI email management system with Groq LLM thread summarization & OAuth integrations.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                             <a href="#detail?project=styletransfer" class="grid-design-card spa-link" data-page="detail" data-project="styletransfer">
-                                <div class="grid-card-thumb"><img src="Assets/NST.png" alt="Style Transfer"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/NST.png" alt="Style Transfer"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Fast NST Tuning</div>
                                     <div class="grid-card-desc">Deep learning experiments fine-tuning a Fast Neural Style Transfer model on Flickr30k using perceptual metrics.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                             <a href="#detail?project=cirrhosis" class="grid-design-card spa-link" data-page="detail" data-project="cirrhosis">
-                                <div class="grid-card-thumb"><img src="Assets/cirrhosis.png" alt="Cirrhosis CV"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/cirrhosis.png" alt="Cirrhosis CV"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Cirrhosis Diagnosis</div>
                                     <div class="grid-card-desc">Multi-task CV system combining classification, detection, and lesion segmentation for liver diagnosis.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                             <a href="#detail?project=fetch" class="grid-design-card spa-link" data-page="detail" data-project="fetch">
-                                <div class="grid-card-thumb"><img src="Assets/fetch.png" alt="Fetch"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/fetch.png" alt="Fetch"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Fetch</div>
                                     <div class="grid-card-desc">AI-powered assistant unifying Drive, Classroom, Calendar, and local notes using RAG context retrieval.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                             <a href="#detail?project=campuslife" class="grid-design-card spa-link" data-page="detail" data-project="campuslife">
-                                <div class="grid-card-thumb"><img src="Assets/campusLife.png" alt="Campus Life"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/campusLife.png" alt="Campus Life"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Campus Life</div>
                                     <div class="grid-card-desc">Android app with Room database, Firebase community hub, and local RAG search over academic notes.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                             <a href="#detail?project=quill" class="grid-design-card spa-link" data-page="detail" data-project="quill">
-                                <div class="grid-card-thumb"><img src="Assets/quill.png" alt="Quill"></div>
+                                <div class="grid-card-thumb"><img loading="lazy" src="Assets/quill.png" alt="Quill"></div>
                                 <div class="grid-card-body">
                                     <div class="grid-card-title">Quill</div>
                                     <div class="grid-card-desc">Cross-platform digital journaling app replicating real notebook interaction with custom canvas math.</div>
+                                    <div class="grid-card-cta">View project →</div>
                                 </div>
                             </a>
                         </div>
@@ -286,17 +328,26 @@
                     return `
                     <div class="card-scroll-area">
                         <h2 class="section-heading">Experience</h2>
+                        <p class="section-sub">Where I've shipped real work for real clients.</p>
                         <div class="exp-block">
-                            <div class="exp-role-title">Artificial Intelligence Engineer</div>
-                            <div class="exp-company">Upwork · Aug 2025 – Feb 2026 (7 mos)</div>
-                            <div class="exp-desc">
-                                • Architected and deployed custom AI solutions and production pipelines for international clients.<br>
-                                • Integrated large language models (LLMs) and retrieval-augmented generation (RAG) workflows into existing business backend architectures.<br>
-                                • Optimized client data processing pipelines for improved system responsiveness and lower latency.<br>
-                                • Collaborated directly with stakeholders to translate business requirements into clean, scalable software implementations.
+                            <div class="exp-header">
+                                <div>
+                                    <div class="exp-role-title">Artificial Intelligence Engineer</div>
+                                    <div class="exp-company">Upwork · Freelance</div>
+                                </div>
+                                <span class="exp-date">Aug 2025 – Feb 2026 · 7 mos</span>
                             </div>
+                            <ul class="exp-list">
+                                <li>Architected and deployed custom AI solutions and production pipelines for international clients.</li>
+                                <li>Integrated large language models (LLMs) and retrieval-augmented generation (RAG) workflows into existing business backend architectures.</li>
+                                <li>Optimized client data processing pipelines for improved system responsiveness and lower latency.</li>
+                                <li>Collaborated directly with stakeholders to translate business requirements into clean, scalable software implementations.</li>
+                            </ul>
                         </div>
-                        <div class="exp-divider"></div>
+                        <h3 class="subheading">Toolkit</h3>
+                        <div class="skills-grid">
+                            ${skillList.map(s => `<span class="skill-chip"><img src="${s.icon}" alt="">${s.name}</span>`).join('')}
+                        </div>
                     </div>`;
                 },
                 afterRender() {}
@@ -306,18 +357,25 @@
                 render() {
                     return `
                     <div class="card-scroll-area">
-                        <h2 class="section-heading">Contact Me</h2>
-                        <div class="contact-info-row"><span>✉</span> minahilimran836@gmail.com</div>
-                        <div class="contact-form-wrap">
-                            <div class="contact-field">
-                                <label for="c-name">Name</label>
-                                <input type="text" id="c-name" placeholder="Your name">
+                        <h2 class="section-heading">Let's Talk</h2>
+                        <p class="section-sub">Have a role, a project or just an idea? My inbox is always open.</p>
+                        <div class="contact-layout">
+                            <div class="contact-intro">
+                                <a class="contact-link" href="mailto:minahilimran836@gmail.com"><span class="ico">✉</span>minahilimran836@gmail.com</a>
+                                <a class="contact-link" href="https://www.linkedin.com/in/minahil-imran-29ab72291/" target="_blank" rel="noopener"><span class="ico" style="background:var(--blue)"><img src="Assets/linkedin.svg" alt=""></span>LinkedIn</a>
+                                <a class="contact-link" href="https://github.com/MinahilImran836" target="_blank" rel="noopener"><span class="ico" style="background:var(--green)"><img src="Assets/github.svg" alt=""></span>GitHub</a>
                             </div>
-                            <div class="contact-field">
-                                <label for="c-msg">Message</label>
-                                <textarea id="c-msg" rows="4" placeholder="Say hello..."></textarea>
-                            </div>
-                            <button class="contact-submit-btn" onclick="sendMessage()">Send ✦</button>
+                            <form class="contact-form-wrap" onsubmit="sendMessage(event)" novalidate>
+                                <div class="contact-field">
+                                    <label for="c-name">Name</label>
+                                    <input type="text" id="c-name" placeholder="Your name" autocomplete="name">
+                                </div>
+                                <div class="contact-field">
+                                    <label for="c-msg">Message</label>
+                                    <textarea id="c-msg" rows="5" placeholder="Say hello..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary contact-submit-btn">Send Message ✦</button>
+                            </form>
                         </div>
                     </div>`;
                 },
@@ -328,9 +386,9 @@
                 render() {
                     return `
                     <div class="card-scroll-area">
-                        <a href="#designs" class="detail-back-btn spa-link" data-page="designs">← Back to Projects</a>
+                        <a href="#designs" class="btn detail-back-btn spa-link" data-page="designs">← Back to Projects</a>
                         <div class="detail-meta">
-                            <div class="detail-title" id="detail-title">Loading…</div>
+                            <h2 class="detail-title" id="detail-title"></h2>
                             <div class="detail-tags" id="detail-tags"></div>
                         </div>
                         <p class="detail-description" id="detail-desc"></p>
@@ -387,7 +445,11 @@
                     };
 
                     const data = projects[project];
-                    if (!data) return;
+                    if (!data) {
+                        history.replaceState(null, '', '#designs');
+                        navigate({ page: 'designs', project: null });
+                        return;
+                    }
                     document.title = data.title + ' | Minahil Imran';
                     document.getElementById('detail-title').textContent = data.title;
                     const tagsEl = document.getElementById('detail-tags');
@@ -408,11 +470,15 @@
                     grid.className = 'detail-screens-grid ' + (data.screens.length > 2 ? 'grid-4-items' : 'grid-2-items');
 
                     data.screens.forEach((src, i) => {
-                        const div = document.createElement('div');
+                        const div = document.createElement('button');
+                        div.type = 'button';
                         div.className = 'detail-screen-thumb';
+                        div.setAttribute('aria-label', 'Enlarge screenshot ' + (i + 1));
+                        div.addEventListener('click', () => openLightbox(src, data.title + ' screen ' + (i + 1)));
                         const img = document.createElement('img');
                         img.src = src;
-                        img.alt = data.title + ' Screen ' + (i + 1);
+                        img.loading = 'lazy';
+                        img.alt = data.title + ' screen ' + (i + 1);
                         div.appendChild(img);
                         grid.appendChild(div);
                     });
@@ -469,18 +535,42 @@
         navigate(getRoute());
 
         /* ── CONTACT ── */
-        function sendMessage() {
-            const name = (document.getElementById('c-name') || {}).value || '';
-            const msg  = encodeURIComponent((document.getElementById('c-msg') || {}).value || '');
+        function sendMessage(e) {
+            if (e) e.preventDefault();
+            const nameEl = document.getElementById('c-name');
+            const msgEl  = document.getElementById('c-msg');
+            const name = nameEl.value.trim();
+            const msg  = msgEl.value.trim();
+
+            let ok = true;
+            [[nameEl, name], [msgEl, msg]].forEach(([el, v]) => {
+                el.parentElement.classList.toggle('invalid', !v);
+                if (!v && ok) { el.focus(); ok = false; }
+            });
+            if (!ok) return;
+
             const to   = 'minahilimran836@gmail.com';
             const subj = encodeURIComponent('Portfolio Inquiry from ' + name);
-            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subj}&body=${msg}`, '_blank');
+            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subj}&body=${encodeURIComponent(msg)}`, '_blank', 'noopener');
         }
 
-        /* ── RESUME DOWNLOAD ── */
-        function downloadResume() {
-            alert('Add your resume PDF to the Assets folder to link it here.');
+        document.addEventListener('input', e => {
+            const field = e.target.closest('.contact-field');
+            if (field) field.classList.remove('invalid');
+        });
+
+        /* ── LIGHTBOX ── */
+        const lightbox    = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        function openLightbox(src, alt) {
+            lightboxImg.src = src;
+            lightboxImg.alt = alt;
+            lightbox.classList.add('open');
+            document.getElementById('lightbox-close').focus();
         }
+        function closeLightbox() { lightbox.classList.remove('open'); }
+        lightbox.addEventListener('click', closeLightbox);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
     </script>
 </body>
 </html>
